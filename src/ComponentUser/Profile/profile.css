@@ -1,0 +1,21 @@
+.Profile {
+  max-width: 1280px;
+  margin: 0 auto;
+  background: rgb(255, 255, 255);
+}
+.container-Profile {
+  margin-top: 90px;
+}
+.ProfileBody {
+  display: flex;
+}
+.ProfilesRank {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  border: 1px solid rgb(208, 203, 203);
+  border-radius: 10px;
+  margin: 10px;
+  position: relative;
+}

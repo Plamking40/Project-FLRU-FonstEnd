@@ -1,0 +1,73 @@
+.MainNavbarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(193, 221, 241);
+}
+
+.searchIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.NotificationIcon {
+  width: 20px;
+  height: 20px;
+  background-color: rgb(243, 202, 202);
+  padding: 4px;
+  border-radius: 6px;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+
+.ProflieIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin: 20px;
+}
+
+.dashboardContainer {
+  flex: 0.7;
+}
+
+.proflieName {
+  margin-left: 7px;
+}
+
+.searchItemContainer {
+  display: flex;
+  flex: 2;
+  margin-right: 100px;
+  background-color: rgb(243, 239, 239);
+  padding: 6px;
+  border-radius: 16px;
+  border: 1px solid rgb(163, 163, 166);
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  padding: 3px;
+  background-color: rgb(243, 239, 239);
+}
+
+.searchInput.focus {
+  outline: none;
+}
+
+.proflieItemContainer {
+  display: flex;
+  margin-left: auto;
+  margin-right: 30px;
+}
+
+.proflieItem {
+  display: flex;
+  align-items: center;
+}
+
+.dashtext {
+  font-size: 20x;
+  margin-right: 118px;
+}
