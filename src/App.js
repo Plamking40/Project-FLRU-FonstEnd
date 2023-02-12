@@ -7,7 +7,7 @@ import Rank from "./Pages/Ranking/Rank";
 import SingIn_Outs from "./Pages/SingIn_Out/SingIn_Out";
 import Insertquiz from "./Pages/Quiz/insertquiz";
 import Courses from "./Pages/Courses/Courses";
-import MiniCourseslist from "./Pages/Courses/MiniCourses";
+import MiniCourseslist from "./Pages/Courses/MiniCourseslist";
 
 import HomeUser from "./Pages/User/HomeUsers";
 import AllQuizs from "./Pages/User/AllQuizs";
@@ -17,6 +17,7 @@ import Ranking from "./Pages/User/Rarking";
 import Profiles from "./Pages/User/Profiles";
 import Login from "./Pages/User/Login";
 import AboutUS from "./Pages/User/AboutUS";
+import MiniCourse from "./Pages/User/MiniCourses";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -44,6 +45,10 @@ const router = createBrowserRouter([
   {
     path: "/StartQuizs/:id",
     element: <StartQuizs />,
+  },
+  {
+    path: "/MiniCourse",
+    element: <MiniCourse />,
   },
   {
     path: "/Ranking",

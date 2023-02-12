@@ -14,18 +14,41 @@ import swal from "sweetalert";
 import Axios from "axios";
 
 export default function Ranking() {
-  const [toeic, setToeic] = useState([]);
-  const [cefr, setCefr] = useState([]);
   const [ranks, setRanks] = useState();
 
   const [showADD, setShowADD] = useState(false);
   const handleADDClose = () => setShowADD(false);
   const handleADDShow = () => setShowADD(true);
 
+  const [rname, setRname] = useState();
+  const [rmin, setRmin] = useState();
+  const [rmax, setRmax] = useState();
+
   const getRank = () => {
     Axios.get("http://localhost:8080/rankcompares").then((response) => {
       setRanks(response.data);
     });
+  };
+
+  const dataEditAdd = [
+    {
+      name: rname,
+      min: rname,
+      max: rname,
+    },
+  ];
+
+  const getEditAdd = () => {
+    Axios.post("http://localhost:8080/users/create-users", dataEditAdd).then(
+      (res) => {
+        swal({
+          icon: "success",
+          title: `SIGN UP `,
+          text: `Thank you, for applying for membership.`,
+        });
+        console.log(res.data);
+      }
+    );
   };
 
   useEffect(() => {
@@ -147,7 +170,7 @@ export default function Ranking() {
                   >
                     <Form.Select
                       aria-label="Floating label select example"
-                      // onChange={(e) => setStatus(e.target.value)}
+                      onChange={(e) => setRname(e.target.value)}
                     >
                       <option>Open this Select Rank</option>
                       <option value="TOEIC">TOEIC</option>
@@ -160,7 +183,7 @@ export default function Ranking() {
                     <Form.Control
                       type="number"
                       placeholder="MIN"
-                      // onChange={(e) => setCourses_id(e.target.value)}
+                      onChange={(e) => setRmin(e.target.value)}
                     />
                     <label htmlFor="floatingPasswordCustom">MIN</label>
                   </Form.Floating>
@@ -170,7 +193,7 @@ export default function Ranking() {
                     <Form.Control
                       type="number"
                       placeholder="MAX"
-                      // onChange={(e) => setCourses_id(e.target.value)}
+                      onChange={(e) => setRmax(e.target.value)}
                     />
                     <label htmlFor="floatingPasswordCustom">MAX</label>
                   </Form.Floating>

@@ -7,13 +7,15 @@ import Reward5 from "../../Img/Reward/Reward5.png";
 import Reward6 from "../../Img/Reward/Reward6.png";
 import Reward7 from "../../Img/Reward/Reward7.png";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import Boy from "../../Img/Icons/boy.jpg";
 import Axios from "axios";
 import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 export default function Rank() {
   const [quest, setQuest] = useState([]);
   const [level, setLevel] = useState([]);
-  const [userLv, SetUserLv] = useState(110);
 
   const getQuest = () => {
     Axios.get("http://localhost:8080/quests")
@@ -35,10 +37,17 @@ export default function Rank() {
       });
   };
 
+  const history = useNavigate();
+
+  const key = JSON.parse(window.localStorage.getItem("UserRole"));
+
   useEffect(() => {
     getQuest();
     getLevel();
-    console.log(level);
+
+    if (key?.status != "Student") {
+      history("/");
+    }
   }, []);
 
   const DataReward = [
@@ -72,42 +81,21 @@ export default function Rank() {
     },
   ];
 
-  const DataQuest = [
-    {
-      id: 1,
-      title: "Grammar1",
-      content: "Get English Skill quiz over 50 point",
-      ExpPoint: 20,
-    },
-    {
-      id: 2,
-      title: "Grammar2",
-      content: "Get English Skill quiz over 40 point",
-      ExpPoint: 40,
-    },
-    {
-      id: 3,
-      title: "Grammar3",
-      content: "Get English Skill quiz over 30 point",
-      ExpPoint: 60,
-    },
-    {
-      id: 4,
-      title: "Grammar4",
-      content: "Get English Skill quiz over 20 point",
-      ExpPoint: 80,
-    },
-  ];
+  const [userLv, SetUserLv] = useState(1);
+  const [userExp, SetUserExp] = useState(110);
 
   function ExpBar() {
-    {
-      level.map((item) => {});
+    if (userLv == 100 || userLv > 100) {
+      SetUserLv(userLv + 1);
+    } else if (userLv == 200 || userLv > 200) {
+      SetUserLv(userLv + 1);
     }
     return (
       <div className="ExpBar">
+        FLRU Level {userLv}
         <ProgressBar
-          now={userLv}
-          label={`${userLv} / 100`}
+          now={userExp}
+          label={`${userExp} / 100`}
           variant="success"
           className="ExpBarProgress"
         />
@@ -123,13 +111,9 @@ export default function Rank() {
         </div>
         <div className="RarkBody">
           <div className="ProfileRank">
-            <img
-              className="ProfileRankImg"
-              src="https://scontent.fnak3-1.fna.fbcdn.net/v/t1.15752-9/327373069_1782240815490151_5594021947731530814_n.png?_nc_cat=102&ccb=1-7&_nc_sid=ae9488&_nc_eui2=AeHhR4de_9xzxvEEHKXcXtutzbPNH5anbtDNs80flqdu0IibIJxp5RCyOfVwI2oOKuA9v7BogY2I-eoCUescKMYX&_nc_ohc=EBWBMuJa4hgAX9VWqGM&_nc_ht=scontent.fnak3-1.fna&oh=03_AdRMCeAds555YCeGiSGXJVwN3TeUL1zPhfF8-qpkYvOIEQ&oe=63F8E50C"
-              alt=""
-            />
+            <img className="ProfileRankImg" src={Boy} alt="" />
             {level.map((item) => {
-              if (userLv >= item.Exp_max) {
+              if (userExp >= item.Exp_max) {
                 switch (item.Name) {
                   case "Silver I":
                     return (
@@ -153,29 +137,15 @@ export default function Rank() {
                 return;
               }
             })}
-            <p>Jane Noonbow</p>
+            <h3>{key?.user_id.toUpperCase()}</h3>
+            <p>
+              {key?.firstname} {key?.lastname}
+            </p>
           </div>
           <div className="RankBoard">
             <div className="head-RankBoard">
               <h2>Hello,Jane</h2>
               <ExpBar />
-              {level.map((item) => {
-                if (userLv >= item.Exp_max) {
-                  return (
-                    <>
-                      <p>
-                        FLRU Level {item.id}
-                        <ProgressBar
-                          variant="success"
-                          now={userLv}
-                          label={userLv}
-                          max={item.Exp_max}
-                        />
-                      </p>
-                    </>
-                  );
-                }
-              })}
             </div>
             {/* <div className="Body-RankBoard">
               <h2>Badge Collection</h2>
@@ -234,8 +204,25 @@ export default function Rank() {
               </div>
               <h4>Guide</h4>
               <div className="Guide-Rank">
-                <div className="Body-Guide-Rank">
-                  <p>Try out some mini course</p>
+                <div className="item-Guide-Rank">
+                  <p>TOEIC- Listening</p>
+                  <p>Fri.30/9/2022 10:00 - 11:00</p>
+                  <p>Prof.A</p>
+                  <img src={Boy} alt="" />
+                  <div className="item-Guide-Footer">
+                    <p>2 / 15</p>
+                    <Button variant="warning">Reserve</Button>
+                  </div>
+                </div>
+                <div className="item-Guide-Rank">
+                  <p>TOEIC- Listening</p>
+                  <p>Fri.30/9/2022 10:00 - 11:00</p>
+                  <p>Prof.A</p>
+                  <img src={Boy} alt="" />
+                  <div className="item-Guide-Footer">
+                    <p>2 / 15</p>
+                    <Button variant="warning">Reserve</Button>
+                  </div>
                 </div>
               </div>
             </div>

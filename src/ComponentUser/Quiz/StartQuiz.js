@@ -6,22 +6,62 @@ import Axios from "axios";
 import BGrank from "../../Img/Asset/BG-rank.png";
 import swal from "sweetalert";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function StartQuiz() {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const [selectedValue, setSelectedValue] = useState("");
 
   function handleChange(event) {
     setSelectedValue(event.target.value);
   }
-  function NextQuiz() {
-    console.log(selectedValue);
-    const nextQuestion = currentQuestion + 1;
 
-    if (nextQuestion < question?.questions?.length) {
-      setCurrentQuestion(nextQuestion);
-    } else {
+  const [optionslocal, setOptionsLocal] = useState([]);
+  const [rankCompares, setRankCompares] = useState("");
+  const [Compares, setCompares] = useState("");
+
+  async function NextQuiz() {
+    const nextQuestion = currentQuestion + 1;
+    const datauser = JSON.parse(window.localStorage.getItem("UserRole"));
+
+    console.log(datauser?.user_id);
+
+    if (nextQuestion == question?.questions?.length) {
+      let headersList = {
+        "Content-Type": "application/json",
+      };
+
+      let bodyContent = JSON.stringify({
+        user_id: datauser?.user_id,
+        options: JSON.parse(window.localStorage.getItem("is_right")),
+        Quiz_id: id,
+      });
+
+      let reqOptions = {
+        url: "http://localhost:8080/QuizHistory/create-QuizHistory",
+        method: "POST",
+        headers: headersList,
+        data: bodyContent,
+      };
+
+      axios.request(reqOptions).then((res) => {
+        console.log("res: ", res.data);
+        if (res.data.status == "success") {
+          setScore(res.data.score);
+          setScoreListening(res.data.scoreListening);
+          setScoreWriting(res.data.scoreWriting);
+          setScoreSpeaking(res.data.scoreSpeaking);
+          setScoreReading(res.data.scoreReading);
+          setRankCompares(res.data.rankType);
+          setCompares(res.data.Compares);
+        }
+      });
+
       setShowScore(true);
     }
+    setCurrentQuestion(nextQuestion);
+    optionslocal.push(selectedValue);
+    window.localStorage.setItem("is_right", JSON.stringify(optionslocal));
+    setSelectedValue("");
   }
 
   const [question, setQuestion] = useState(null);
@@ -39,9 +79,17 @@ export default function StartQuiz() {
     );
   };
 
+  const getRankType = () => {
+    Axios.get(`http://localhost:8080/rankcompares`).then((response) => {
+      console.log(response.data);
+      setRankType(response.data);
+    });
+  };
+
   useEffect(() => {
     getQuestion(id);
-    console.log();
+    getRankType();
+    console.log(question);
   }, []);
 
   const EngRank = [
@@ -83,27 +131,6 @@ export default function StartQuiz() {
 
   const [score, setScore] = useState(0);
 
-  const [optionslocal, setOptionsLocal] = useState([]);
-
-  const OptionClick = async (is_right) => {
-    console.log("คุณเลือก: " + is_right);
-    try {
-      const nextQuestion = currentQuestion + 1;
-
-      if (nextQuestion < question?.questions?.length) {
-        setCurrentQuestion(nextQuestion);
-        optionslocal.push(is_right);
-        window.localStorage.setItem("is_right", JSON.stringify(optionslocal));
-      } else {
-        optionslocal.push(is_right);
-        window.localStorage.setItem("is_right", JSON.stringify(optionslocal));
-        setShowScore(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <div className="QuizUser">
       {showScore ? (
@@ -117,21 +144,20 @@ export default function StartQuiz() {
                   <Button variant="light">Chart</Button>
                 </div>
                 <div className="ViewFull">
-                  {EngRank.map((item) => {
-                    if (item.title == "CEFR") {
-                      if (item.score === score) {
+                  {rankType.map((item) => {
+                    let i = 0;
+                    if (rankCompares == item.compares) {
+                      if (score)
                         return (
                           <>
                             <div className="ViewAsScore">
-                              <p>{item.title}</p>
-                              <h1>{item.rank}</h1>
+                              <p>{rankCompares}</p>
+                              <h1>{Compares}</h1>
                             </div>
                           </>
                         );
-                      }
                     }
                   })}
-
                   <div className="OverallScore">
                     <p>Overall Score</p>
                     <h1>

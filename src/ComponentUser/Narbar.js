@@ -4,7 +4,7 @@ import "./narbar.css";
 import { Form, Modal, Button } from "react-bootstrap";
 import swal from "sweetalert";
 import Axios from "axios";
-import { Await, useNavigate } from "react-router-dom";
+import { Await, json, useNavigate } from "react-router-dom";
 import Profile from ".././Img/Icons/boy.jpg";
 import { AiFillCaretDown } from "react-icons/ai";
 
@@ -14,6 +14,29 @@ import User from ".././Img/Icons/user.png";
 import Quality from ".././Img/Icons/quality.png";
 
 export default function Narbar() {
+  const headersList = {
+    Accept: "*/*",
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYXdkcXciLCJlbWFpbCI6InBsYW1raW5nNDBAZ21haWwuY29tIiwiaWF0IjoxNjc2MTQ5Njg3LCJleHAiOjE2NzYxNTY4ODd9.nc-wsH-EpVSLMdgdsH-s5l8UVih69c5UmBvOOoBTPO8`,
+    "Content-Type": "application/json",
+  };
+
+  const bodyContent = JSON.stringify({
+    username: "",
+    password: "",
+  });
+
+  const reqOptions = {
+    url: "localhost:8080/users/profile",
+    method: "GET",
+    headers: headersList,
+    data: bodyContent,
+  };
+
+  // useEffect(() => {
+  //   const response = Axios.request(reqOptions);
+  //   console.log("Token : " + response.data);
+  // });
+
   const [showLogin, setShowLogin] = useState(false);
   const handleCloseLogin = () => setShowLogin(false);
   const handleShowLogin = () => setShowLogin(true);
@@ -39,19 +62,38 @@ export default function Narbar() {
       password: password,
     })
       .then(async (res) => {
-        console.log(res.data);
+        window.localStorage.setItem("token", "Bearer " + res.data.token);
 
-        if (res.data.Role == "Student") {
+        let headersList = {
+          Accept: "*/*",
+          "User-Agent": "Thunder Client (https://www.thunderclient.com)",
+          Authorization: window.localStorage.getItem("token"),
+          "Content-Type": "application/json",
+        };
+
+        let reqOptions = {
+          url: "http://localhost:8080/users/profile",
+          method: "GET",
+          headers: headersList,
+          data: {},
+        };
+
+        let response = await Axios.request(reqOptions);
+        console.log(response.data);
+        window.localStorage.setItem(
+          "UserRole",
+          JSON.stringify(response.data.data)
+        );
+        if (response.data.data.status == "Student") {
           history("/");
           handleCloseLogin();
-          window.localStorage.setItem("UserRole", JSON.stringify(res.data));
           await swal({
             icon: "success",
             title: `SIGN IN ${userid}`,
             text: `Welcome, Student to FLEU Website`,
             button: false,
           });
-        } else if (res.data.Role == "Admin") {
+        } else if (response.data.data.status == "Admin") {
           history("/home");
           await swal({
             icon: "success",
@@ -59,7 +101,7 @@ export default function Narbar() {
             text: `Welcome, Admin to FLEU Website`,
             button: false,
           });
-        } else if (res.data.Role == "Staff") {
+        } else if (response.data.data.status == "Staff") {
           history("/home");
           await swal({
             icon: "success",
@@ -67,7 +109,7 @@ export default function Narbar() {
             text: `Welcome, Staff to FLEU Website`,
             button: false,
           });
-        } else if (res.data.Role == "Teacher") {
+        } else if (response.data.data.status == "Teacher") {
           history("/home");
           await swal({
             icon: "success",
@@ -103,7 +145,7 @@ export default function Narbar() {
     // ];
     // console.log(dataRegister);
     if (membership === "yes") {
-      Axios.post("http://localhost:8080/users/create-users", {
+      Axios.post("http://localhost:8080/users/create-usersv2", {
         user_id: userid,
         password: password,
         firstname: firstname,
@@ -112,12 +154,12 @@ export default function Narbar() {
         email: email,
         tel: tel,
       }).then((res) => {
+        console.log(res.data.token);
         swal({
           icon: "success",
           title: `SIGN UP ${userid}`,
           text: `Thank you, ${firstname}  ${lastname} for applying for membership.`,
         });
-        console.log(res.data.msg);
         setShowRegister(false);
       });
     } else {
@@ -153,7 +195,7 @@ export default function Narbar() {
 
   function ShowProfile() {
     const key = JSON.parse(window.localStorage.getItem("UserRole"));
-    if (key?.Role === "Student") {
+    if (key?.status === "Student") {
       return (
         <>
           <li className="profile-l">
@@ -163,9 +205,11 @@ export default function Narbar() {
               }}
             >
               <p>
-                {key?.Role} : {key?.user_id}
+                {key?.status.toUpperCase()} : {key?.user_id.toUpperCase()}
                 <br />
-                <span>{key?.name}</span>
+                <span>
+                  {key?.firstname} {key?.lastname}
+                </span>
               </p>
               <img
                 src={Profile}
@@ -179,7 +223,9 @@ export default function Narbar() {
               <h3>
                 {key?.user_id}
                 <br />
-                <span>{key?.name}</span>
+                <span>
+                  {key?.firstname} {key?.lastname}
+                </span>
               </h3>
               <hr style={{ margin: "10px" }} />
               <ul style={{ padding: "10px 15px" }}>
@@ -244,7 +290,7 @@ export default function Narbar() {
             </a>
           </li>
           <li>
-            <a href={"/"} className="nav-links">
+            <a href={"/MiniCourse"} className="nav-links">
               <i className="fa-solid fa-house-user"></i>
               Mini Courses
             </a>
